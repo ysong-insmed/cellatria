@@ -461,11 +461,11 @@ def generate_qc_plots_and_filters(adatas, metadata_df, args):
     filters = []
     for sample_id in metadata_df["sample_id"]:
         filters.extend([
-            {"sample_id": sample_id, "type": "nCount_RNA", "threshold": float(args.min_umi_per_cell[sample_id])},
-            {"sample_id": sample_id, "type": "nCount_RNA", "threshold": float(args.max_umi_per_cell[sample_id])},
-            {"sample_id": sample_id, "type": "nFeature_RNA", "threshold": float(args.min_genes_per_cell[sample_id])},
-            {"sample_id": sample_id, "type": "nFeature_RNA", "threshold": float(args.max_genes_per_cell[sample_id])},
-            {"sample_id": sample_id, "type": "percent_mt", "threshold": float(args.max_mt_percent[sample_id])}
+            {"sample_id": sample_id, "type": "nCount_RNA", "threshold": float(args.min_umi_per_cell[sample_id]) if args.min_umi_per_cell[sample_id] is not None else None},
+            {"sample_id": sample_id, "type": "nCount_RNA", "threshold": float(args.max_umi_per_cell[sample_id]) if args.max_umi_per_cell[sample_id] is not None else None},
+            {"sample_id": sample_id, "type": "nFeature_RNA", "threshold": float(args.min_genes_per_cell[sample_id]) if args.min_genes_per_cell[sample_id] is not None else None},
+            {"sample_id": sample_id, "type": "nFeature_RNA", "threshold": float(args.max_genes_per_cell[sample_id]) if args.max_genes_per_cell[sample_id] is not None else None},
+            {"sample_id": sample_id, "type": "percent_mt", "threshold": float(args.max_mt_percent[sample_id]) if args.max_mt_percent[sample_id] is not None else None},
         ])
 
     return db_plots, filters

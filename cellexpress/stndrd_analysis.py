@@ -58,7 +58,7 @@ def run_analysis(adata, args):
     # -------------------------------
     # 4. Filter dataset to only keep highly variable genes (can be skipped if desired)
     hvg_mask = adata.var["highly_variable"].values
-    adata = adata[:, hvg_mask].copy()
+    # adata = adata[:, hvg_mask].copy()
 
     # -------------------------------
     # 5. Regress Out Technical Effects (optional)
@@ -69,16 +69,6 @@ def run_analysis(adata, args):
         sc.pp.regress_out(adata, ['total_counts', 'pct_counts_mito'])
     else:
         print("*** 🚫 Skipping regression step (per user input).")
-
-    # -------------------------------
-    # 6. Scaling
-    print(f"*** 🔄 Scaling data with max_value={args.scale_max_value}...")    
-    sc.pp.scale(adata, max_value=args.scale_max_value)
-
-    # -------------------------------
-    # 7. Principal Component Analysis (PCA)
-    print(f"*** 🔄 Running PCA with {args.n_pcs} components...")
-    sc.tl.pca(adata, svd_solver='arpack', n_comps=args.n_pcs)
 
     # -------------------------------
 
@@ -97,9 +87,27 @@ def run_analysis(adata, args):
         adata_nohm = adata.copy() # Store a copy of adata before batch correction
 
         # Perform Harmony batch correction
+
+        # first re-select HVGs
+        # Convert to categorical
+        if len(btchvrs) == 1:
+            adata.obs[btchvrs[0]] = adata.obs[btchvrs[0]].astype("category")
+            print("*** 🔄 Re-selecting highly variable genes before Harmony...")
+            sc.pp.highly_variable_genes(adata, flavor='seurat', n_top_genes=args.n_top_genes, batch_key=btchvrs[0])
+            # -------------------------------
+            # 6. Scaling, need to happen on log1p data so here
+            print(f"*** 🔄 Scaling data with max_value={args.scale_max_value}...")
+            sc.pp.scale(adata, max_value=args.scale_max_value)
+
+            # -------------------------------
+            # 7. Principal Component Analysis (PCA), need to happen on scaled data, use newly selected HVGs
+            print(f"*** 🔄 Running PCA with {args.n_pcs} components...")
+            sc.tl.pca(adata, svd_solver="arpack", n_comps=args.n_pcs, use_highly_variable=True)
+
         print(f"*** 🔄 Performing batch correction using Harmony on: {' and '.join(btchvrs)} ...")
-        harmony_out = hm.run_harmony(adata.obsm['X_pca'], adata.obs, btchvrs)        
-        adata.obsm['X_pca'] = harmony_out.Z_corr.T # Replace PCA embeddings in adata with Harmony-corrected version
+        harmony_out = hm.run_harmony(adata.obsm['X_pca'], adata.obs, btchvrs)
+
+        adata.obsm['X_pca'] = harmony_out.Z_corr # Replace PCA embeddings in adata with Harmony-corrected version
         print("*** ✅ Harmony correction complete.")
     
     elif bc == "scvi":
@@ -139,6 +147,16 @@ def run_analysis(adata, args):
     # Run for non-harmonized data if available
     if adata_nohm is not None:
         print("*** 🔄 Processing non-harmonized (original) data...")
+        # -------------------------------
+        # 6. Scaling
+        print(f"*** 🔄 Scaling data with max_value={args.scale_max_value}...")
+        sc.pp.scale(adata_nohm, max_value=args.scale_max_value)
+
+        # -------------------------------
+        # 7. Principal Component Analysis (PCA)
+        print(f"*** 🔄 Running PCA with {args.n_pcs} components...")
+        sc.tl.pca(adata_nohm, svd_solver="arpack", n_comps=args.n_pcs, use_highly_variable=True)
+
         graph_pipeline(adata_nohm, args, label = "no batch corrected")
 
     # -------------------------------
