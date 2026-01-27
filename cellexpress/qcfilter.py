@@ -67,21 +67,26 @@ def qc_filter(adatas, metadata_df, args):
         initial_cell_count = adata.n_obs  # Total cells before QC
 
         while True:
+
             # -------------------------------
             # Apply gene filtering
             sc.pp.filter_genes(adata, min_cells=min_cell)
 
             # -------------------------------
             # Apply cell filtering based on gene count
-            sc.pp.filter_cells(adata, min_genes=min_genes_per_cell)
-            if max_genes_per_cell < np.inf:
-                sc.pp.filter_cells(adata, max_genes=max_genes_per_cell)
+            if min_genes_per_cell is not None:
+                sc.pp.filter_cells(adata, **{"min_genes": int(min_genes_per_cell)})
+
+            if max_genes_per_cell is not None and max_genes_per_cell < np.inf:
+                sc.pp.filter_cells(adata, **{"max_genes": int(max_genes_per_cell)})
 
             # -------------------------------
-            # Apply cell filtering based on UMI count (total_counts)
-            sc.pp.filter_cells(adata, min_counts=min_umi_per_cell)
-            if max_umi_per_cell < np.inf:
-                sc.pp.filter_cells(adata, max_counts=max_umi_per_cell)
+            # Apply cell filtering based on UMI count
+            if min_umi_per_cell is not None:
+                sc.pp.filter_cells(adata, **{"min_counts": int(min_umi_per_cell)})
+
+            if max_umi_per_cell is not None and max_umi_per_cell < np.inf:
+                sc.pp.filter_cells(adata, **{"max_counts": int(max_umi_per_cell)})
 
             # -------------------------------
             # Calculate mitochondrial % per cell
