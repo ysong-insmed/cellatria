@@ -19,6 +19,9 @@
 !CONTRIBUTING.md
 !Dockerfile
 !LICENSE.txt
+!pyproject.toml
+!uv.lock
+!*.Dockerfile
 
 # Exclude directories inside agent and cellexpress
 **/__pycache__/

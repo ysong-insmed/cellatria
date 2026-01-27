@@ -1,0 +1,17 @@
+[project]
+name = "cellatria"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "argparse>=1.4.0",
+    "celltypist>=1.7.1",
+    "harmonypy>=0.2.0",
+    "pandas-stubs==2.3.3.260113",
+    "requests>=2.32.5",
+    "scanpy>=1.12",
+    "scimilarity>=0.4.1",
+    "scrublet>=0.2.3",
+    "scvi-tools>=1.4.1",
+]
