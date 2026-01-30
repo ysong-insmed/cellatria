@@ -88,7 +88,7 @@ def run_analysis(adata, args):
 
         # Perform Harmony batch correction
 
-        # first re-select HVGs
+        # First re-select batch-aware HVGs since harmony works on PCA embeddings
         # Convert to categorical
         if len(btchvrs) == 1:
             adata.obs[btchvrs[0]] = adata.obs[btchvrs[0]].astype("category")
@@ -122,7 +122,7 @@ def run_analysis(adata, args):
             raise ValueError(f"*** 🚨 The batch variable '{bkey}' is not present in adata.obs. Available columns: {', '.join(adata.obs.columns)}")
 
         adata_nohm = adata.copy() # Store a copy of adata before batch correction
-        
+
         print("*** 🔄 Training scVI on counts (CPU-friendly settings)...")        
         scvi_adata = _prepare_scvi_adata(raw_counts, hvg_mask, bkey)
         scvi.model.SCVI.setup_anndata(scvi_adata, batch_key=bkey)
@@ -146,6 +146,7 @@ def run_analysis(adata, args):
 
     # Run for non-harmonized data if available
     if adata_nohm is not None:
+
         print("*** 🔄 Processing non-harmonized (original) data...")
         # -------------------------------
         # 6. Scaling
@@ -161,4 +162,6 @@ def run_analysis(adata, args):
 
     # -------------------------------
     print("*** ✅ Standard analysis pipeline completed.")
+
+    # return raw counts, processed adata, and non-harmonized adata (if applicable)
     return raw_counts, adata, adata_nohm

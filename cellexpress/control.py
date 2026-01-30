@@ -111,6 +111,7 @@ def control_pipe(args):
     raw_counts, adata, adata_nohm = run_analysis(adata, args)
 
     # Run DEA for cluster
+    #TODO: Yuyao choose which label DEG to run on
     if args.top_n_deg_leidn != 0:
         adata = compute_degs(adata, groupby="leiden_cluster", pts=True, dea_method=args.dea_method, n_genes=args.top_n_deg_leidn,
                             pval_threshold=args.pval_threshold, logfc_threshold=args.logfc_threshold, pts_threshold=args.pts_threshold)
@@ -154,26 +155,27 @@ def control_pipe(args):
     # -------------------------------
     # Generate HTML report
     print("*** 🔄 Creating report summary...")
-    generate_report(adatas = adatas,
-                    raw_counts = raw_counts,
-                    qc_adatas = qc_adatas,
-                    adata = adata, 
-                    adata_nohm = adata_nohm,
-                    metadata_df = metadata_df,
-                    scrublet_scores = scrublet_scores,
-                    summary_df = summary_df,
-                    qc_summary_df = qc_summary_df,
-                    rmd_file = os.path.join(args.cellexpress_path, "report.Rmd"), 
-                    output_file = os.path.join(args.outputs_path, f"report_{ui}_{datetime.today().date().isoformat()}.html"), 
-                    disease_label = args.disease,
-                    tissue_label = args.tissue,
-                    date = date,
-                    runtime_minute = runtime_minute,
-                    ui = ui,
-                    args = args)
+    # generate_report(adatas = adatas,
+    #                 raw_counts = raw_counts,
+    #                 qc_adatas = qc_adatas,
+    #                 adata = adata,
+    #                 adata_nohm = adata_nohm,
+    #                 metadata_df = metadata_df,
+    #                 scrublet_scores = scrublet_scores,
+    #                 summary_df = summary_df,
+    #                 qc_summary_df = qc_summary_df,
+    #                 rmd_file = os.path.join(args.cellexpress_path, "report.Rmd"),
+    #                 output_file = os.path.join(args.outputs_path, f"report_{ui}_{datetime.today().date().isoformat()}.html"),
+    #                 disease_label = args.disease,
+    #                 tissue_label = args.tissue,
+    #                 date = date,
+    #                 runtime_minute = runtime_minute,
+    #                 ui = ui,
+    #                 args = args)
 
     # -------------------------------
     # Store processed data
+    # why it is only storing raw counts?
     print("*** 🔄 Storing data...")
 
     fileneme = os.path.join(args.outputs_path, f"counts-qced_{ui}_{datetime.today().date().isoformat()}.h5ad")
@@ -184,6 +186,8 @@ def control_pipe(args):
     json_adata = summarize_adata_structure(adata.raw.to_adata())
     adata.raw.to_adata().write(fileneme)    
     print(f"*** ✅ Data stord to: {fileneme}")
+
+
 
     # -------------------------------
     # Save configuration JSON
