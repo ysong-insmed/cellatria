@@ -19,7 +19,7 @@
     "n_top_genes": 2000,
     "regress_out": "no",
     "scale_max_value": null,
-    "n_pcs": 30,
+    "n_pcs": 50,
 
     "batch_correction": "harmony",
     "batch_vars": "sample_id",
@@ -33,12 +33,13 @@
     "cty_model_path": null,
     "cty_model_name": null,
 
+    "marker_label": "celltype",
     "pval_threshold": 0.05,
     "logfc_threshold": 0.25,
     "dea_method": "wilcoxon",
-    "top_n_deg_leidn": 100,
-    "top_n_deg_scim": 100,
-    "top_n_deg_cltpst": 100,
+    "top_n_deg_leidn": null,
+    "top_n_deg_scim": null,
+    "top_n_deg_cltpst": null,
     "pts_threshold": 0.1,
 
     "doc_url": null,

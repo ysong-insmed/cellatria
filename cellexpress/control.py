@@ -111,8 +111,12 @@ def control_pipe(args):
     raw_counts, adata, adata_nohm = run_analysis(adata, args)
 
     # Run DEA for cluster
-    #TODO: Yuyao choose which label DEG to run on
-    if args.top_n_deg_leidn != 0:
+
+    if args.marker_label is not None:
+        adata = compute_degs(adata, groupby=args.marker_label, pts=True, dea_method=args.dea_method, n_genes=args.top_n_deg_leidn,
+                            pval_threshold=args.pval_threshold, logfc_threshold=args.logfc_threshold, pts_threshold=args.pts_threshold)
+
+    elif args.top_n_deg_leidn != 0:
         adata = compute_degs(adata, groupby="leiden_cluster", pts=True, dea_method=args.dea_method, n_genes=args.top_n_deg_leidn,
                             pval_threshold=args.pval_threshold, logfc_threshold=args.logfc_threshold, pts_threshold=args.pts_threshold)
 
@@ -182,12 +186,15 @@ def control_pipe(args):
     raw_counts.write(fileneme)
     print(f"*** ✅ Data stord to: {fileneme}")
 
-    fileneme = os.path.join(args.outputs_path, f"adata_{ui}_{datetime.today().date().isoformat()}.h5ad")
+    fileneme = os.path.join(args.outputs_path, f"adata_raw_{ui}_{datetime.today().date().isoformat()}.h5ad")
     json_adata = summarize_adata_structure(adata.raw.to_adata())
     adata.raw.to_adata().write(fileneme)    
     print(f"*** ✅ Data stord to: {fileneme}")
 
+    fileneme = os.path.join(args.outputs_path, f"adata_full_{ui}_{datetime.today().date().isoformat()}.h5ad")
+    adata.write(fileneme)
 
+    print(f"*** ✅ Data stord to: {fileneme}")
 
     # -------------------------------
     # Save configuration JSON
