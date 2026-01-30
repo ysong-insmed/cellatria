@@ -57,7 +57,8 @@ def run_analysis(adata, args):
 
     # -------------------------------
     # 4. Filter dataset to only keep highly variable genes (can be skipped if desired)
-    hvg_mask = adata.var["highly_variable"].values
+    # Yuyao skip this, use full counts for scvi as designed
+    # hvg_mask = adata.var["highly_variable"].values
     # adata = adata[:, hvg_mask].copy()
 
     # -------------------------------
@@ -107,7 +108,9 @@ def run_analysis(adata, args):
         print(f"*** 🔄 Performing batch correction using Harmony on: {' and '.join(btchvrs)} ...")
         harmony_out = hm.run_harmony(adata.obsm['X_pca'], adata.obs, btchvrs)
 
-        adata.obsm['X_pca'] = harmony_out.Z_corr # Replace PCA embeddings in adata with Harmony-corrected version
+        print("*** 🔄 Updating PCA embeddings with Harmony-corrected values...")
+
+        adata.obsm['X_pca_harmony'] = harmony_out.Z_corr # Replace PCA embeddings in adata with Harmony-corrected version
         print("*** ✅ Harmony correction complete.")
     
     elif bc == "scvi":
@@ -124,7 +127,7 @@ def run_analysis(adata, args):
         adata_nohm = adata.copy() # Store a copy of adata before batch correction
 
         print("*** 🔄 Training scVI on counts (CPU-friendly settings)...")        
-        scvi_adata = _prepare_scvi_adata(raw_counts, hvg_mask, bkey)
+        scvi_adata = _prepare_scvi_adata(raw_counts, bkey)
         scvi.model.SCVI.setup_anndata(scvi_adata, batch_key=bkey)
         model = scvi.model.SCVI(scvi_adata, n_latent=args.n_pcs)
         model.train(

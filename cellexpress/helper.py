@@ -187,6 +187,8 @@ def graph_pipeline(adata, args, label=""):
     use_rep = None
     if "X_scVI" in adata.obsm:
         use_rep = "X_scVI"
+    elif "X_pca_harmony" in adata.obsm:
+        use_rep = "X_pca_harmony"
     elif "X_pca" in adata.obsm:
         use_rep = "X_pca"
 
@@ -2045,9 +2047,8 @@ def _ensure_counts_matrix(adata):
 
 # -------------------------------
 
-def _prepare_scvi_adata(raw_counts, hvg_mask, batch_key):
-    # subset to HVGs to speed up CPU training (optional but practical)
-    scvi_adata = raw_counts[:, hvg_mask].copy()
+def _prepare_scvi_adata(raw_counts, batch_key):
+    scvi_adata = raw_counts.copy()
     _ensure_counts_matrix(scvi_adata)
     # batch key: single categorical column
     if batch_key is not None:
