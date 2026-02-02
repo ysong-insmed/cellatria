@@ -193,7 +193,7 @@ def graph_pipeline(adata, args, label=""):
         use_rep = "X_pca"
 
     # Step 1: Build k-NN graph
-    print(f"*** 🔄 Computing neighborhood graph{suffix}...")
+    print(f"*** 🔄 Computing neighborhood graph{suffix} on rep {use_rep} ...")
     sc.pp.neighbors(adata, n_neighbors=args.n_neighbors, n_pcs=args.n_pcs, use_rep=use_rep, random_state=0)
 
     # Step 2: Perform Leiden clustering

@@ -33,7 +33,7 @@
     "cty_model_path": null,
     "cty_model_name": null,
 
-    "marker_label": "celltype",
+    "marker_label": null,
     "pval_threshold": 0.05,
     "logfc_threshold": 0.25,
     "dea_method": "wilcoxon",

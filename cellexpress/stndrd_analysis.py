@@ -38,13 +38,17 @@ def run_analysis(adata, args):
     # 0. Store Raw Data (preprocessing snapshot)
     # This preserves the raw expression for celltype annotation later
     raw_counts = adata.copy()
-    _ensure_counts_matrix(raw_counts)  # normalize dtype/format up front  
+    _ensure_counts_matrix(raw_counts)  # normalize dtype/format up front
+
+    adata.layers["counts"] = adata.X.copy()  # Store raw counts in layers
 
     # -------------------------------
     # 1. Normalization (log1p)
     print("*** 🔄 Normalizing data (log1p)...")
     sc.pp.normalize_total(adata, target_sum=args.norm_target_sum) # (default 10,000 UMIs per cell)
     sc.pp.log1p(adata)
+
+    adata.layers["log1p"] = adata.X.copy()
 
     # -------------------------------
     # 2. HVG Selection
@@ -99,6 +103,8 @@ def run_analysis(adata, args):
             # 6. Scaling, need to happen on log1p data so here
             print(f"*** 🔄 Scaling data with max_value={args.scale_max_value}...")
             sc.pp.scale(adata, max_value=args.scale_max_value)
+
+            adata.layers["scaled"] = adata.X.copy()
 
             # -------------------------------
             # 7. Principal Component Analysis (PCA), need to happen on scaled data, use newly selected HVGs
@@ -155,6 +161,8 @@ def run_analysis(adata, args):
         # 6. Scaling
         print(f"*** 🔄 Scaling data with max_value={args.scale_max_value}...")
         sc.pp.scale(adata_nohm, max_value=args.scale_max_value)
+
+        adata.layers["scaled"] = adata_nohm.X.copy()
 
         # -------------------------------
         # 7. Principal Component Analysis (PCA)

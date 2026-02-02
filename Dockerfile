@@ -51,7 +51,7 @@ ENV IMAGE_META_PATH=/usr/local/share/cellatria/image-meta.json
 
 # -----------------------------------
 # System package installation
-RUN apt-get update --fix-missing && \ 
+RUN apt-get update --fix-missing && \
 		apt-get install -y --no-install-recommends --fix-missing \
 		pkgconf \
 		build-essential \
@@ -89,7 +89,7 @@ RUN apt-get update --fix-missing && \
         libblosc-dev \
         liblzma-dev \
         libzstd-dev \
-        libopenblas-dev \        
+        libopenblas-dev \
         libxml2-dev \
         libnlopt-dev \
         libicu-dev \
@@ -108,6 +108,7 @@ RUN apt-get update --fix-missing && \
         libgit2-dev \
         libblas-dev \
         liblapack-dev \
+        libssl-dev zlib1g-dev libcurl4-openssl-dev \
         gnupg2 \
         lsb-release \
         dirmngr \
@@ -115,7 +116,7 @@ RUN apt-get update --fix-missing && \
         psmisc \
         jq \
         ninja-build \
-        clang \ 
+        clang \
         clang-tidy \
         && \
         apt-get clean && \

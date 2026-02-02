@@ -196,6 +196,11 @@ def control_pipe(args):
 
     print(f"*** ✅ Data stord to: {fileneme}")
 
+    if adata_nohm is not None:
+        fileneme = os.path.join(args.outputs_path, f"adata_nohm_{ui}_{datetime.today().date().isoformat()}.h5ad")
+        adata_nohm.write(fileneme)
+        print(f"*** ✅ Data stord to: {fileneme}")
+
     # -------------------------------
     # Save configuration JSON
     json_dict = {
