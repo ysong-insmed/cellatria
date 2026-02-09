@@ -42,7 +42,8 @@ ENV IMAGE_BUILD_DATE="${BUILD_DATE}"
 ENV IMAGE_TREE_STATE="${TREE_STATE}"
 
 # ---- Embed a JSON manifest inside the image ----
-    RUN mkdir -p /usr/local/share/cellatria && \
+    RUN mkdils
+    r -p /usr/local/share/cellatria && \
     printf '{\n  "image_repo": "%s",\n  "image_tag": "%s",\n  "image_version": "%s",\n  "vcs_ref": "%s",\n  "build_date": "%s",\n  "tree_state": "%s"\n}\n' \
       "$IMAGE_REPO" "$IMAGE_TAG" "$IMAGE_VERSION" "$VCS_REF" "$BUILD_DATE" "$TREE_STATE" \
     > /usr/local/share/cellatria/image-meta.json

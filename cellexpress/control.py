@@ -116,9 +116,12 @@ def control_pipe(args):
         adata = compute_degs(adata, groupby=args.marker_label, pts=True, dea_method=args.dea_method, n_genes=args.top_n_deg_leidn,
                             pval_threshold=args.pval_threshold, logfc_threshold=args.logfc_threshold, pts_threshold=args.pts_threshold)
 
-    elif args.top_n_deg_leidn != 0:
+    elif args.top_n_deg_leidn is not None:
         adata = compute_degs(adata, groupby="leiden_cluster", pts=True, dea_method=args.dea_method, n_genes=args.top_n_deg_leidn,
                             pval_threshold=args.pval_threshold, logfc_threshold=args.logfc_threshold, pts_threshold=args.pts_threshold)
+
+    else:
+        print("*** 🚫 No DEA for clusters performed (top_n_deg_leidn=0 and no marker_label provided).")
 
     # -------------------------------
     # Cell Annotation (SCimilarity and/or CellTypist)

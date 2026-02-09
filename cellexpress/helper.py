@@ -216,7 +216,7 @@ def graph_pipeline(adata, args, label=""):
 
     # Step 6: Compute UMAP embedding
     print(f"*** 🔄 Computing UMAP{suffix}...")
-    sc.tl.umap(adata, random_state=0)   
+    sc.tl.umap(adata, random_state=0, min_dist=0.8)
 
     # Step 7: Optionally compute t-SNE
     if args.compute_tsne.lower() == "yes":
